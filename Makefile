@@ -74,15 +74,40 @@ reinstall:
 	@$(call ACTION,Installing dependencies...)
 	@npm install
 
+# target: start-docker       - Start App in Docker.
+.PHONY: start-docker
+start-docker:
+	@$(call HELPTEXT,$@)
+	@bash -c "docker-compose up node-latest"
+
 # target: test               - Run all tests.
 .PHONY: test
-test:
+test: test-help jscs eslint stylelint csslint jsunittest
+
+.PHONY: test-help
+test-help:
+	@$(ECHO) "$(HELP_COLOR)Run all tests.$(NO_COLOR)"
+
+# target: test-node-latest   - Run all tests with latest Node in Docker.
+.PHONY: test-node-latest
+test-node-latest:
 	@$(call HELPTEXT,$@)
-	@$(MAKE) jscs
-	@$(MAKE) eslint
-	@$(MAKE) stylelint
-	@$(MAKE) csslint
-	@$(MAKE) jsunittest
+	@$(call ACTION,Starting Docker...)
+	@bash -c "docker-compose run node-latest make test"
+
+# target: test-node-9        - Run all tests with Node 9 in Docker.
+.PHONY: test-node-9
+test-node-9:
+	@$(call HELPTEXT,$@)
+	@$(call ACTION,Starting Docker...)
+	@bash -c "docker-compose run node-9 make test"
+
+# target: test-node-8        - Run all tests with Node 8 in Docker.
+.PHONY: test-node-8
+test-node-8:
+	@$(call HELPTEXT,$@)
+	@$(call ACTION,Starting Docker...)
+	@bash -c "docker-compose run node-8 make test"
 
 
 # ------------------------------------------------------------------------
